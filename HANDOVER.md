@@ -1,16 +1,21 @@
-# Celtic: where things stand (5 Nov 2026)
+# Celtic: where things stand (6 Nov 2026)
 
 Read CLAUDE.md first.
 
 ## Done
-Holding page, Worker with Celtic feed routes, KV namespace. Noindex.
+Live on celtic.richardmcallister.workers.dev, noindex.
+Pages: hub, season, squad, match centre, results, seasons, players, player, opponents, opponent (Rangers is the Old Firm page), records, managers, manager, honours, kits with shirt collection, search. Dark mode, phone tab bar, iPhone launch images, match alerts, calendar.
+Archive: competitive games 1888-2026 from 139 Wikipedia season articles. Checks in tools/data/reconcile.txt.
 
 ## Needs Richard
-- `API_FOOTBALL_KEY` as a Worker secret, then confirm team 247 and league 179 are right.
-- Domain (recommended: celticfc.wiki), then add it to `routes` in wrangler.jsonc.
-- Assets in `~/Documents/Projects/celtic-assets`, starting with the crest and competition logos.
+- `API_FOOTBALL_KEY` as a Worker secret. Until then live sections say the feed is not connected. Tested only with mocked standings and squad.
+- Domain (recommended: celticfc.wiki), then add it to `routes` in wrangler.jsonc and update the origin in calendar().
+- Crests for older opponents: the pack has the 20 current ones.
+- Rights: kit images, crests and logos are not cleared. Recheck before removing noindex.
 - Trips: does he have a Celtic ticket account?
 
-## Next
-1. Parse the 139 Wikipedia season articles into the archive and report coverage.
-2. Port the shared shell, hub and season page from SITE1; rework the table and pace sheet for the Premiership split.
+## Known gaps
+- Scorers before 2000 are sparse on Wikipedia. Appearances exist only for players on Wikipedia's list (100 apps or more, or notable).
+- Season articles and list articles disagree in places: see reconcile.txt (13 league seasons; manager totals by a few games).
+- Not ported from manutd.wiki: Ask, trips, where to watch (no official Scottish rights list sourced yet), timeline, compare, comebacks, shelf, links, analytics.
+- A weekly refresh task does not exist yet, so results reach the archive only when run. The hub and season page are live from the feed.

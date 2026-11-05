@@ -1,0 +1,73 @@
+scorers 1888-12-08 Clyde 9-2: 5 goals named
+scorers 1888-12-29 Clydesdale 5-1: 4 goals named
+scorers 1889-03-16 Northern 4-1: 1 goals named
+scorers 1889-05-11 Cowlairs 6-1: 5 goals named
+duplicate with different score 1946-04-20 St Johnstone: 8-2 / 5-0
+scorers 1967-04-12 Dukla Prague 3-1: 2 goals named
+duplicate with different score 1974-03-10 Motherwell: 2-2 / 1-0
+scorers 1992-09-30 Cologne 3-0: 1 goals named
+scorers 1997-12-13 Heart of Midlothian 1-0: 2 goals named
+scorers 1998-09-29 Vitória 2-1: 3 goals named
+scorers 1999-12-11 Aberdeen 6-0: 5 goals named
+scorers 2003-01-25 St Mirren 3-0: 2 goals named
+scorers 2004-09-21 Falkirk 8-1: 7 goals named
+scorers 2005-02-06 Dunfermline Athletic 3-0: 2 goals named
+scorers 2011-08-25 Sion 3-0: 1 goals named
+league 1890: list P18 W11 D3 L4 48-21 / articles P22 W13 D3 L6 60-30
+league 1891: list P22 W16 D3 L3 62-21 / articles P23 W16 D4 L3 64-23
+league 1903: list P26 W18 D2 L6 68-27 / articles P26 W18 D2 L6 68-29
+league 1904: list P26 W18 D5 L3 68-31 / articles P27 W18 D6 L3 68-31
+league 1905: list P30 W24 D1 L5 76-19 / articles P30 W24 D1 L5 73-17
+league 1915: list P38 W32 D3 L3 116-32 / articles P38 W32 D3 L3 116-23
+league 1920: list P42 W30 D8 L6 86-35 / articles P42 W30 D6 L6 86-35
+league 1939: list P5 W3 D0 L2 7-8 / articles P5 W3 D0 L2 7-7
+league 1958: list P34 W14 D8 L12 70-53 / articles P35 W15 D8 L12 72-53
+league 1979: list P36 W18 D11 L7 61-38 / articles P36 W18 D11 L7 63-38
+league 1980: list P36 W26 D4 L6 84-37 / articles P36 W26 D4 L6 85-37
+league 1981: list P36 W24 D7 L5 79-33 / articles P36 W24 D7 L5 79-34
+league 1995: list P36 W24 D11 L1 74-25 / articles P36 W24 D11 L1 74-24
+manager Willie Maley: list 1617 games / articles 1622 (major competitions)
+manager Jimmy McGrory: list 843 games / articles 848 (major competitions)
+manager Jock Stein: list 690 games / articles 701 (major competitions)
+manager Billy McNeill: list 257 games / articles 264 (major competitions)
+manager Frank Connor: list 4 games / articles 0 (major competitions)
+manager Lou Macari: list 34 games / articles 39 (major competitions)
+manager Martin O'Neill: list 282 games / articles 278 (major competitions)
+manager Gordon Strachan: list 203 games / articles 207 (major competitions)
+manager Tony Mowbray: list 45 games / articles 41 (major competitions)
+manager Neil Lennon: list 227 games / articles 231 (major competitions)
+manager Brendan Rodgers: list 169 games / articles 165 (major competitions)
+manager John Kennedy: list 10 games / articles 16 (major competitions)
+manager Brendan Rodgers: list 124 games / articles 119 (major competitions)
+manager Martin O'Neill: list 8 games / articles 12 (major competitions)
+manager Martin O'Neill: list 27 games / articles 48 (major competitions)
+player Alan Thompson: list 51 goals / articles 53 (major competitions; same-name players may be merged)
+player Odsonne Édouard: list 85 goals / articles 88 (major competitions; same-name players may be merged)
+player Anthony Ralston: list 8 goals / articles 10 (major competitions; same-name players may be merged)
+player Liam Scales: list 8 goals / articles 10 (major competitions; same-name players may be merged)
+player Yang Hyun-jun: list 17 goals / articles 19 (major competitions; same-name players may be merged)
+player David Turnbull: list 23 goals / articles 31 (major competitions; same-name players may be merged)
+player Mark Burchill: list 20 goals / articles 24 (major competitions; same-name players may be merged)
+opponent Aberdeen: list 308 league games / articles 318
+opponent Ayr United: list 76 league games / articles 75
+opponent Clyde: list 126 league games / articles 127
+opponent Cowdenbeath: list 22 league games / articles 23
+opponent Cowlairs: list 2 league games / articles 3
+opponent Dumbarton: list 40 league games / articles 41
+opponent Dundee: list 242 league games / articles 252
+opponent Dundee United: list 201 league games / articles 209
+opponent Falkirk: list 153 league games / articles 160
+opponent Hamilton Academical: list 110 league games / articles 111
+opponent Heart of Midlothian: list 322 league games / articles 333
+opponent Hibernian: list 306 league games / articles 315
+opponent Kilmarnock: list 241 league games / articles 251
+opponent Leith Athletic: list 12 league games / articles 13
+opponent Livingston: list 33 league games / articles 38
+opponent Motherwell: list 291 league games / articles 301
+opponent Queen's Park: list 84 league games / articles 85
+opponent Rangers: list 331 league games / articles 345
+opponent Renton: list 6 league games / articles 7
+opponent Ross County: list 35 league games / articles 39
+opponent St Johnstone: list 146 league games / articles 151
+opponent St Mirren: list 251 league games / articles 262
+opponent Third Lanark: list 116 league games / articles 115
