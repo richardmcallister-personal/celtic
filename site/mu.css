@@ -225,3 +225,4 @@ img.comp.ondark{background:#151515;border-radius:3px;padding:1px}
 :root[data-theme="dark"] img.comp:not(.ondark){background:#f3f1ee;border-radius:3px;padding:1px}
 #astnote{margin:14px 0 0}
 .sub a,.sheet h2 small a{color:var(--red-ink)}
+.fxlist .r a{color:inherit;text-decoration:none}
