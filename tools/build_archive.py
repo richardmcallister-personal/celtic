@@ -255,9 +255,65 @@ for x in managers:
     seen_m.add(x['slug']); search.append([x['name'],'manager','/manager/?m='+x['slug'],x['career'],[]])
 for o in opponents: search.append([o['name'],'club','/opponent/?o='+slug(o['name']),str(o['p'])+' games, '+o['first'][:4]+'–'+o['last'][:4],[]])
 for x in seasons: search.append([x['title'],'season','/results/?season='+str(x['y']),' · '.join(str(v) for v in (x['div'],x['pos']) if v),[]])
-for t,u,a in [('Every result','/results/',['results','fixtures']),('Every season','/seasons/',['seasons','league']),('Honours','/honours/',['trophies','titles','cups']),('Records','/records/',[]),('Kits','/kits/',['shirts','hoops']),('Squad','/squad/',[]),('Old Firm: Rangers','/opponent/?o=rangers',['old firm','derby'])]: search.append([t,'page',u,'',a])
+for t,u,a in [('Timeline','/timeline/',['history','decades']),('Every result','/results/',['results','fixtures']),('Every season','/seasons/',['seasons','league']),('Honours','/honours/',['trophies','titles','cups']),('Records','/records/',[]),('Kits','/kits/',['shirts','hoops']),('Squad','/squad/',[]),('Old Firm: Rangers','/opponent/?o=rangers',['old firm','derby'])]: search.append([t,'page',u,'',a])
 json.dump(search,open('site/search.json','w'),ensure_ascii=False,separators=(',',':'))
 json.dump({'archive':{'date':today,'note':f"{len(matches)} matches to {matches[-1]['d']}"}},open('site/status.json','w'))
+# ---- first-team squad from the club article (fallback until the feed answers; also gives Wikipedia links)
+sq=[]; ca=ct[ct.find('===First-team squad==='):ct.find('===Out on loan===')]
+POSN={'GK':'Goalkeeper','DF':'Defender','MF':'Midfielder','FW':'Attacker'}; pslug={p['slug'] for p in players}
+for m in re.finditer(r'\{\{\s*Fs player\s*\|(.*?)\}\}',ca,re.S|re.I):
+    f=dict(x.split('=',1) for x in re.split(r'\|(?![^\[]*\]\])',m.group(1)) if '=' in x); f={k.strip():v.strip() for k,v in f.items()}
+    lk=re.search(r'\[\[([^\]|]+)(?:\|([^\]]*))?\]\]',f.get('name','')); 
+    if not lk: continue
+    nm=(lk.group(2) or lk.group(1)).strip(); wk=lk.group(1).strip(); sl=slug(bare(wk))
+    sq.append(dict(n=int(f['no']) if f.get('no','').isdigit() else None,name=nm,pos=POSN.get(f.get('pos','').upper(),''),nat=f.get('nat',''),wiki=wk.replace(' ','_'),slug=sl if sl in pslug else None,cap=1 if re.search(r'captain',f.get('other',''),re.I) else 0))
+json.dump(sq,open('site/squad.json','w'),ensure_ascii=False,separators=(',',':'))
+# ---- timeline: every trophy, lost final, manager, record and first, from the archive; club events from the club article
+TL=[]; CN={'LG':'League title','SC':'Scottish Cup','LC':'League Cup','EC':'European Cup'}
+HN={'League Championship':'LG','Scottish League Cup':'LC','Scottish Cup':'SC','Champions League':'EC','European Cup':'EC'}
+def fin(m): r=(m.get('r') or '').lower(); return bool(re.search(r'\bfinal\b',r)) and not re.search(r'semi|quarter|qualif',r)
+for h in honours:
+    c=next((v for k,v in HN.items() if k.lower() in h['name'].lower()),None)
+    if not c: continue
+    for ss in h['seasons']:
+        y=int(ss[:4]); d=None; m0=None
+        if c!='LG':
+            F=[m for m in matches if m['c']==c and m['y']==y and fin(m) and (m['gf']>m['ga'] or m.get('pw')==1)]
+            if F: m0=F[-1]; d=m0['d']
+        if not d:
+            L=[m for m in matches if m['c']=='LG' and m['y']==y]; d=L[-1]['d'] if L else f"{y+1}-05-01"
+        e=dict(d=d,t='trophy',c=c,h=CN[c]+' '+ss.replace('-','–'),s=y)
+        if m0: e['m']={k:m0[k] for k in ('o','gf','ga','v','pw','h') if k in m0}
+        TL.append(e)
+# runs of league titles
+lg=sorted(int(x[:4]) for h in honours if 'League Championship' in h['name'] for x in h['seasons']); run=[]
+for y in lg+[None]:
+    if run and y==run[-1]+1: run.append(y); continue
+    if len(run)>=4:
+        L=[m for m in matches if m['c']=='LG' and m['y']==run[-1]]
+        TL.append(dict(d=(L[-1]['d'] if L else f"{run[-1]+1}-05-01"),t='record',h=f"{len(run)} league titles in a row",p=f"Every title from {run[0]}–{str(run[0]+1)[-2:]} to {run[-1]}–{str(run[-1]+1)[-2:]}."))
+    run=[y] if y else []
+for m in matches:
+    if m['c'] in ('SC','LC','EC','EL','CWC','FC') and fin(m) and (m['gf']<m['ga'] or m.get('pw')==0):
+        TL.append(dict(d=m['d'],t='final',h={'SC':'Scottish Cup','LC':'League Cup','EC':'European Cup','EL':'UEFA Cup','CWC':"Cup Winners' Cup",'FC':'Fairs Cup'}[m['c']]+' final lost',m={k:m[k] for k in ('o','gf','ga','v','pw','h') if k in m}))
+seen_mg=set()
+for x in MAN:
+    if not x['fromd']: continue
+    TL.append(dict(d=x['fromd'],t='manager',h=x['name']+(' takes charge as caretaker' if x['care'] else ' appointed manager'),u='/manager/?m='+x['slug']))
+def ev_m(m,t,h,p=''): TL.append(dict(d=m['d'],t=t,h=h,p=p,m={k:m[k] for k in ('o','gf','ga','v','pw','h') if k in m}))
+ev_m(matches[0],'match','First competitive game')
+ev_m([m for m in matches if m['c']=='LG'][0],'match','First Scottish League game')
+ev_m([m for m in matches if m['c'] in('EC','EL','CWC','FC')][0],'match','First European tie')
+ev_m(records['wins'][0],'record','Record win')
+ev_m(records['defeats'][0],'record','Record defeat')
+u=records['runs']['Unbeaten']; TL.append(dict(d=u['to'],t='record',h=f"{u['n']} games unbeaten",p=f"The longest unbeaten run in the major competitions, from {u['from']}."))
+att=max((m for m in matches if m.get('att')),key=lambda m:m['att']); ev_m(att,'record','Biggest crowd on record',f"{att['att']} at {att['v']}.")
+W='https://en.wikipedia.org/wiki/Celtic_F.C.'
+TL+= [dict(d='1887-11-06',t='club',h='Celtic founded',p='Formed in the East End of Glasgow to relieve poverty among the Irish community.',src=W),
+      dict(d='1903-08-15',t='club',h='The green and white hoops',p='Celtic adopt the hooped shirt, worn ever since.',src=W,dy=1)]
+TL.sort(key=lambda e:e['d'])
+json.dump(TL,open(OUT+'timeline.json','w'),ensure_ascii=False,separators=(',',':'))
+print('timeline',len(TL),collections.Counter(e['t'] for e in TL))
 json.dump(otd,open(OUT+'otd.json','w'),ensure_ascii=False,separators=(',',':'))
 json.dump(honours,open(OUT+'honours.json','w'),ensure_ascii=False,separators=(',',':'))
 for n,d in dict(matches=matches,opponents=opponents,players=players,managers=managers,player_goals=player_goals,records=records,seasons=seasons).items():

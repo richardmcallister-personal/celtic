@@ -40,33 +40,238 @@
 <link rel="apple-touch-startup-image" media="screen and (device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="/assets/splash/2160x1620.png">
 <link rel="apple-touch-startup-image" media="screen and (device-width: 744px) and (device-height: 1133px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="/assets/splash/1488x2266.png">
 <link rel="apple-touch-startup-image" media="screen and (device-width: 744px) and (device-height: 1133px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" href="/assets/splash/2266x1488.png">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="/mu.css">
-<style></style>
+<style>
+.pitch{background:#1f6b3a;background-image:repeating-linear-gradient(0deg,#1f6b3a 0 40px,#23753f 40px 80px);border:3px solid rgba(255,255,255,.8);position:relative;padding:18px 10px;display:flex;flex-direction:column-reverse;gap:14px;min-height:520px}
+.pitch:before{content:"";position:absolute;left:50%;top:50%;width:120px;height:120px;margin:-60px 0 0 -60px;border:3px solid rgba(255,255,255,.8);border-radius:50%}
+.pitch:after{content:"";position:absolute;left:0;right:0;top:50%;border-top:3px solid rgba(255,255,255,.8)}
+.row{display:flex;justify-content:space-evenly;gap:6px;position:relative;z-index:1}
+.slot{width:clamp(84px,18vw,130px);text-align:center}
+.slot select{width:100%;font:inherit;font-size:12px;padding:4px;border:0;background:var(--paper)}
+.slot .pos{font-family:var(--head);font-weight:600;font-size:10px;letter-spacing:0;color:#fff;opacity:.85;margin-bottom:3px}
+.slot img.face{width:44px;height:44px;border-radius:50%;object-fit:cover;background:var(--paper);display:block;margin:0 auto 4px;border:2px solid #fff}
+.slot .nm{color:#fff;font-weight:600;font-size:13px;text-shadow:0 1px 2px #000;line-height:1.1;min-height:16px}
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:end;margin-bottom:12px}
+.controls label{display:flex;flex-direction:column;font-size:12px;color:var(--muted)} .controls select{font:inherit;min-height:44px;padding:7px 12px;border:1px solid var(--rule);border-radius:999px;background:var(--paper);color:var(--ink)}
+
+table.mu td.name{white-space:nowrap} a.pl{color:var(--ink);text-decoration:none;font-weight:600;border-bottom:1px solid var(--rule)} a.pl:hover{color:var(--red-ink);border-bottom-color:var(--red-ink)}
+.out{color:var(--red-ink);font-weight:600;font-size:12px;letter-spacing:0}
+.bio{background:var(--tint);padding:16px 18px;display:none} .bio.on{display:block}
+.bio img{float:right;width:120px;margin:0 0 10px 14px}
+.bio h3{margin-top:0}
+.saves{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px} .saves li{background:var(--tint);padding:6px 10px;display:flex;gap:8px;align-items:center} .saves button{all:unset;cursor:pointer;font-weight:600} .saves button[data-del]{color:var(--red-ink);font-weight:700;padding:0 4px}
+.face.sm{width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;background:var(--tint)}
+
+/* tabs */
+.sqtabs-wrap{padding:6px} .sqtabs{display:flex;gap:4px}
+.sqtabs button{flex:1;min-height:44px;border:0;border-radius:12px;background:transparent;font:inherit;font-size:15px;font-weight:600;color:var(--muted);cursor:pointer}
+.sqtabs button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+/* squad table: name, apps, goals, assists by default on phones; the rest on request */
+.colsw{display:none}
+@media (max-width:640px){.colsw{display:block} #squad table.mu td.name{white-space:normal} #squad table.mu th,#squad table.mu td{padding-left:6px;padding-right:6px} #injuries table.mu td{white-space:normal} #squad table.mu .x{display:none} #squad.all table.mu .x{display:table-cell} #squad.all{overflow-x:auto}}
+/* pitch: tap a position to pick */
+.slot{position:relative} .slot select{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.slot button.tap{all:unset;cursor:pointer;display:block;width:100%;min-height:72px;border-radius:12px;padding:4px 0}
+.slot button.tap:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.slot .add{display:inline-block;margin-top:2px;font-size:12px;font-weight:600;color:#fff;background:rgba(0,0,0,.35);border-radius:999px;padding:3px 10px}
+.pickdlg{border:0;border-radius:var(--radius);padding:0;width:min(520px,calc(100vw - 24px));max-height:min(80vh,680px);background:var(--paper);color:var(--ink)}
+.pickdlg::backdrop{background:rgba(0,0,0,.45)}
+.pdhd .pp{font-size:14px;font-weight:600;color:var(--muted);margin-left:6px} .pdhd{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 6px} .pdhd h2{margin:0}
+#pickQ{display:block;width:calc(100% - 32px);margin:0 16px 8px;box-sizing:border-box;font:inherit;font-size:16px;padding:10px 14px;border:1px solid var(--rule);border-radius:999px;background:var(--paper);color:var(--ink)}
+.pdlist{list-style:none;margin:0;padding:0 8px 12px;overflow:auto;max-height:calc(min(80vh,680px) - 120px)}
+.pdlist button{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center;width:100%;min-height:48px;padding:6px 8px;border-radius:10px}
+.pdlist button:hover,.pdlist button:focus-visible{background:var(--tint)}
+.pdlist img{width:36px;height:36px;border-radius:50%;object-fit:cover;background:var(--tint)} .pdlist small{display:block;color:var(--muted);font-size:13px}
+.pdlist .av{font-size:12px;font-weight:600;border-radius:999px;padding:2px 8px;background:var(--tint);color:var(--muted)} .pdlist .av.out{background:var(--us);color:var(--red-ink)} .pdlist .av.dbt{color:var(--ink)}
+.pdlist h3{font-size:13px;color:var(--muted);margin:10px 8px 2px}
+.controls .btn{min-height:44px} .controls button.tlink{background:none;border:0;padding:0 6px;font:inherit;font-weight:600;cursor:pointer}
+</style>
 </head><body><a class="skip" href="#main-content">Skip to main content</a><div class="wrap">
 <header class="mu">
   <a class="brand" href="/"><img src="/assets/crest-88.png" alt="" width="44" height="44" decoding="async"><h1><small>A fan-built club archive</small>Celtic</h1></a>
-  <div class="from" id="from">Squad<span>First team</span></div>
+  <div class="from" id="from">Squad<span>Availability · pick your XI</span></div>
 </header>
 <nav class="munav" aria-label="Sections"></nav>
 <main id="main-content" tabindex="-1">
-<div class="sheet"><h2>Squad</h2><p class="sub" style="margin:0 0 10px">The feed's latest list, with this season's games and goals from the feed, and career figures from Wikipedia's list where a player is on it (100 appearances or more, or otherwise notable).</p><div id="sq"><p class="sub">Loading…</p></div></div>
+<div class="sheet sqtabs-wrap">
+  <div class="sqtabs" role="tablist" aria-label="Squad sections">
+    <button role="tab" id="tab-squad" aria-controls="p-squad" aria-selected="true" data-t="squad">Squad</button>
+    <button role="tab" id="tab-availability" aria-controls="p-availability" aria-selected="false" data-t="availability">Availability</button>
+    <button role="tab" id="tab-pick" aria-controls="p-pick" aria-selected="false" data-t="pick">Pick your XI</button>
+  </div>
+</div>
+<div class="sheet" role="tabpanel" id="p-squad" aria-labelledby="tab-squad">
+  <h2>Squad</h2>
+  <p class="sub" id="squadNote" style="margin:0 0 8px"></p>
+  <div class="colsw"><button class="tlink" type="button" id="moreCols" aria-pressed="false">Show all columns</button></div>
+  <div id="squad"><p class="sub">Loading…</p></div>
+</div>
+<div class="sheet" role="tabpanel" id="p-availability" aria-labelledby="tab-availability" hidden>
+  <h2>Availability</h2>
+  <p class="sub" style="margin:0 0 8px">Injured, suspended or doubtful, live from API-Football.</p>
+  <div id="injuries"></div>
+</div>
+<div class="sheet" role="tabpanel" id="p-pick" aria-labelledby="tab-pick" hidden>
+  <h2>Pick your XI</h2>
+  <p class="sub" style="margin:0 0 12px">Pick a fixture and a shape, then tap a position. Anyone injured, suspended or doubtful is marked and sorted to the bottom. Each player can be used once. Line-ups are kept on this device.</p>
+  <div class="controls">
+    <label>Fixture<select id="fix"></select></label>
+    <label>Formation<select id="form"><option>4-3-3</option><option>4-2-3-1</option><option>3-4-3</option><option>4-4-2</option><option>3-5-2</option><option>4-1-4-1</option></select></label>
+    <button class="btn" id="save" type="button">Save XI</button><button class="btn ghost" id="png" type="button">Download PNG</button><button class="btn ghost" id="copy" type="button">Copy text</button><button class="tlink" id="clear" type="button">Clear</button>
+  </div>
+  <div class="pitch" id="pitch"></div>
+  <p class="sub" id="pickNote"></p>
+  <h3>Saved line-ups</h3>
+  <ul class="saves" id="saves"></ul>
+</div>
+<dialog class="pickdlg" id="pickDlg" aria-labelledby="pickTitle">
+  <div class="pdhd"><h2 id="pickTitle">Pick a player</h2><button class="calic" type="button" id="pickClose" aria-label="Close">✕</button></div>
+  <input type="search" id="pickQ" placeholder="Search the squad" autocomplete="off" aria-label="Search the squad">
+  <ul class="pdlist" id="pickList"></ul>
+</dialog>
 </main>
 <footer class="mu"><span id="stamp"></span> Results, managers, honours and player totals: Wikipedia (CC BY-SA). Live data: API-Football. Crests, logos and kit images: <a href="/kits/#credits">sources and credits</a>. An independent fan site, not connected with Celtic FC.</footer>
 </div>
 <script src="/mu.js"></script>
 <script>
 (function(){
-MU.nav('Squad'); MU.checked("archive",document.getElementById("stamp"),"Archive built");
-var $=function(i){return document.getElementById(i)}, E=MU.esc;
-function dt(d,o){return new Date(d+"T12:00:00Z").toLocaleDateString("en-GB",o||{day:"numeric",month:"short",year:"numeric",timeZone:"UTC"})}
-function rc(m){return m.gf>m.ga?"rw":m.gf<m.ga?"rl":"rd"}
-function score(m){return '<span class="'+rc(m)+'">'+m.gf+'–'+m.ga+'</span>'+(m.pw!=null?' <small>'+(m.pw?"won":"lost")+' on pens</small>':'')}
-var ORDER=["Goalkeeper","Defender","Midfielder","Attacker"];
-Promise.all([MU.api("squad"),fetch("/history/players.json").then(function(r){return r.json()}),MU.api("players",{page:1}).catch(function(){return {}}),MU.api("players",{page:2}).catch(function(){return {}})]).then(function(a){var pl=(a[0].response&&a[0].response[0]&&a[0].response[0].players)||[], H=a[1], S={};
-  [a[2],a[3]].forEach(function(j){(j.response||[]).forEach(function(x){var t={a:0,m:0,g:0,as:0}; (x.statistics||[]).forEach(function(s){if(s.team&&s.team.id!==MU.TEAM)return; t.a+=s.games.appearences||0; t.m+=s.games.minutes||0; t.g+=s.goals.total||0; t.as+=s.goals.assists||0}); S[x.player.id]=t})});
-  function arch(n){var sn=MU.slug(n.split(" ").pop()), ini=/^[A-Z]\./.test(n)?n[0].toLowerCase():null, c=H.filter(function(h){return MU.slug(h.name.split(" ").pop())===sn&&(!ini||h.name[0].toLowerCase()===ini)&&(h.last>="2020"||/present|20[12]\d/.test(h.career||""))}); return c.sort(function(x,y){return (y.apps||0)-(x.apps||0)})[0]}
-  $("sq").innerHTML=ORDER.map(function(pos){var r=pl.filter(function(p){return p.position===pos}); if(!r.length)return ""; return '<h2 style="margin-top:14px">'+pos+'s</h2><table class="mu"><thead><tr><th class="n">No.</th><th>Player</th><th class="n">Age</th><th class="n">Apps</th><th class="n">Goals</th><th class="n">Assists</th><th class="n">Career apps</th><th class="n">Career goals</th></tr></thead><tbody>'+r.map(function(p){var h=arch(p.name), s=S[p.id]||{}; return '<tr><td class="n">'+(p.number||"")+'</td><td><img class="face" src="/img/player/'+p.id+'.png" alt="" loading="lazy" onerror="this.style.visibility=\'hidden\'">'+(h?'<a href="/player/?p='+h.slug+'">'+E(h.name)+'</a>':E(p.name))+'</td><td class="n">'+(p.age||"")+'</td><td class="n">'+(s.a==null?"–":s.a)+'</td><td class="n">'+(s.g==null?"–":s.g)+'</td><td class="n">'+(s.as==null?"–":s.as)+'</td><td class="n">'+(h&&h.apps!=null?h.apps:"–")+'</td><td class="n">'+(h&&h.goals!=null?h.goals:"–")+'</td></tr>'}).join("")+'</tbody></table>'}).join("")||'<p class="sub">No squad list yet.</p>'
-}).catch(function(e){MU.apiDown($("sq"),e)});
+  MU.nav("Squad"); MU.checked("archive",document.getElementById("stamp"),"Archive built");
+  var FALLBACK=[], HIST=[], FIX=[]; // FALLBACK: /squad.json, the first-team list on Wikipedia's club article
+  var FORMS={"4-3-3":[["GK"],["LB","CB","CB","RB"],["CM","CM","CM"],["LW","ST","RW"]],"4-2-3-1":[["GK"],["LB","CB","CB","RB"],["DM","DM"],["LW","AM","RW"],["ST"]],"3-4-3":[["GK"],["CB","CB","CB"],["LWB","CM","CM","RWB"],["LW","ST","RW"]],"4-4-2":[["GK"],["LB","CB","CB","RB"],["LM","CM","CM","RM"],["ST","ST"]],"3-5-2":[["GK"],["CB","CB","CB"],["LWB","CM","CM","CM","RWB"],["ST","ST"]],"4-1-4-1":[["GK"],["LB","CB","CB","RB"],["DM"],["LM","CM","CM","RM"],["ST"]]};
+  var GROUP={GK:"Goalkeeper",LB:"Defender",CB:"Defender",RB:"Defender",LWB:"Defender",RWB:"Defender",DM:"Midfielder",CM:"Midfielder",AM:"Midfielder",LM:"Midfielder",RM:"Midfielder",LW:"Attacker",RW:"Attacker",ST:"Attacker"};
+  var squad=[], out={}, stats={}, live=false;
+  var $=function(id){return document.getElementById(id)};
+
+  // ---- fixtures select: upcoming games from the feed, or a generic "next match" until it answers
+  function fillFix(){$("fix").innerHTML=FIX.length?FIX.map(function(f){return '<option value="'+f.ko+'">'+(f.home?"v ":"at ")+MU.esc(f.opp)+' · '+MU.fmtDate(f.ko)+(f.home?" (H)":" (A)")+'</option>'}).join(""):'<option value="next">Next match</option>'}
+  fillFix();
+
+  function key(){return "mu:xi:"+$("fix").value+":"+$("form").value}
+  function saved(){try{return JSON.parse(localStorage.getItem(key())||"[]")}catch(e){return []}}
+  function store(arr){try{localStorage.setItem(key(),JSON.stringify(arr))}catch(e){}}
+  function available(){return squad.slice()}  // whole squad (loanees are not in the list); injured/doubtful are flagged, not hidden
+
+  function renderPitch(){
+    var rows=FORMS[$("form").value], picks=saved(), pitch=$("pitch"), idx=0; pitch.innerHTML="";
+    rows.forEach(function(r){
+      var row=document.createElement("div"); row.className="row";
+      r.forEach(function(pos){
+        var i=idx++, slot=document.createElement("div"); slot.className="slot";
+        var cur=picks[i]||"", p=squad.filter(function(x){return String(x.id)===String(cur)})[0];
+        var opts=available().filter(function(x){return String(x.id)===String(cur)||picks.indexOf(String(x.id))<0});
+        opts.sort(function(a,b){var ga=(a.position===GROUP[pos]?0:1)+(out[a.id]?2:0), gb=(b.position===GROUP[pos]?0:1)+(out[b.id]?2:0); return ga-gb||(a.number||99)-(b.number||99)});
+        slot.innerHTML='<div class="pos">'+pos+'</div><button class="tap" type="button" data-i="'+i+'" aria-label="'+pos+': '+(p?MU.esc(p.name)+', change':'pick a player')+'">'+(p&&p.photo?'<img class="face" src="'+p.photo+'" alt="" onerror="this.onerror=null;this.src=\''+(p.wikiPhoto||'/assets/crest-88.png')+'\'">':'<img class="face" src="/assets/crest-88.png" alt="" style="object-fit:contain;padding:8px">')+'<div class="nm">'+(p?MU.esc(short(p.name)):"")+'</div>'+(p?'':'<span class="add">Pick</span>')+'</button><select tabindex="-1" aria-hidden="true" data-i="'+i+'"><option value="">— pick —</option>'+opts.map(function(x){return '<option value="'+x.id+'"'+(String(x.id)===String(cur)?' selected':'')+'>'+(x.position===GROUP[pos]?"":"· ")+MU.esc(x.name)+(x.number?" ("+x.number+")":"")+(out[x.id]?(/questionable|doubt/i.test(out[x.id].type)?" — doubtful":" — OUT"):"")+'</option>'}).join("")+'</select>';
+        slot._opts=opts; slot._cur=cur; slot._pos=pos; row.appendChild(slot);
+      });
+      pitch.appendChild(row);
+    });
+    pitch.querySelectorAll("select").forEach(function(s){s.addEventListener("change",function(){var arr=saved(); arr[+s.dataset.i]=s.value; store(arr); renderPitch()})});
+    pitch.querySelectorAll("button.tap").forEach(function(b){b.addEventListener("click",function(){openPicker(b.closest(".slot"),+b.dataset.i)})});
+    var n=picks.filter(Boolean).length, f=FIX.filter(function(x){return x.ko===$("fix").value})[0];
+    $("pickNote").textContent=n+" of 11 picked"+(f?" for "+(f.home?"Celtic v "+f.opp:f.opp+" v Celtic")+" ("+MU.fmtDate(f.ko)+")":"")+". Out and doubtful follow the feed's injury list.";
+  }
+  function short(n){var p=n.split(" "); return p.length>1&&n.length>16?p[p.length-1]:n}
+
+  // ---- squad table
+  function renderSquad(){
+    var order={Goalkeeper:0,Defender:1,Midfielder:2,Attacker:3};
+    var rows=squad.slice().sort(function(a,b){return order[a.position]-order[b.position]||(a.number||99)-(b.number||99)});
+    function car(p){var h=hist(p); return h?h:null}
+    $("squad").innerHTML='<table class="mu"><thead><tr><th class="x">#</th><th>Player</th><th class="x">Pos</th><th class="x">Age</th><th class="n">Apps</th><th class="n">Goals</th><th class="n">Assists</th><th class="n x">Min</th><th class="n x">Career apps</th><th class="n x">Career goals</th></tr></thead><tbody>'+
+      rows.map(function(p){var s=stats[p.id]||{}; return '<tr'+(out[p.id]?' style="opacity:.55"':'')+'><td class="x">'+(p.number||"")+'</td><td class="name">'+(p.photo?'<img class="face sm" src="'+p.photo+'" alt="" onerror="this.onerror=null;this.src=\''+(p.wikiPhoto||'/assets/crest-88.png')+'\'">':'')+link(p)+(p.cap?' <small>(c)</small>':'')+(out[p.id]?' <span class="out">· out</span>':'')+'</td><td class="x">'+({Goalkeeper:"GK",Defender:"DEF",Midfielder:"MID",Attacker:"ATT"}[p.position]||p.position)+'</td><td class="x">'+(p.age||"")+'</td><td class="n">'+(s.apps==null?"":s.apps)+'</td><td class="n">'+(s.goals==null?"":s.goals)+'</td><td class="n">'+(s.assists==null?"":s.assists)+'</td><td class="n x">'+(s.minutes==null?"":s.minutes)+'</td><td class="n x">'+((car(p)||{}).apps!=null?car(p).apps:"–")+'</td><td class="n x">'+((car(p)||{}).goals!=null?car(p).goals:"–")+'</td></tr>'}).join("")+'</tbody></table>';
+  }
+  function renderOut(){
+    var list=Object.keys(out).filter(function(id){return id!=="_meta"}).map(function(id){return out[id]}), meta=out._meta||{};
+    $("injuries").innerHTML=(meta.fetched?'<p class="sub" style="margin:0 0 8px">Feed pulled '+MU.ago(meta.fetched)+(meta.asOf?' · flags as of the squad list for '+MU.fmtDate(meta.asOf):'')+'. A player flagged here who then starts or comes on is shown as back on the hub.</p>':'')+(list.length?'<table class="mu"><thead><tr><th>Player</th><th>Why</th><th>Since</th></tr></thead><tbody>'+list.map(function(o){var sp=squad.filter(function(p){return String(p.id)===String(o.id)})[0]; return '<tr><td>'+link(sp||{name:o.name})+'</td><td>'+MU.esc(o.type)+(o.reason?' · '+MU.esc(o.reason):'')+'</td><td>'+(o.date?MU.fmtDate(o.date):'')+'</td></tr>'}).join("")+'</tbody></table>':'<div class="empty">'+(live?"Nobody listed as injured or suspended.":"Injury and suspension list arrives with the API; until then everyone is offered in the picker.")+'</div>');
+  }
+  // archive player for a squad name (Wikipedia list covers 100+ appearances), and the best link we have
+  function hist(p){if(p.slug)return HIST.filter(function(h){return h.slug===p.slug})[0]; var sn=norm(p.name).split(" ").pop(), ini=/^[A-Z]\. /.test(p.name)?norm(p.name)[0]:null; return HIST.filter(function(h){return norm(h.name).split(" ").pop()===sn&&(!ini||norm(h.name)[0]===ini)&&(h.last>="2020"||/present|202\d/.test(h.career||""))})[0]}
+  function link(p){var h=hist(p); if(h)return '<a class="pl" href="/player/?p='+h.slug+'">'+MU.esc(p.name)+'</a>'; if(p.wiki)return '<a class="pl" href="https://en.wikipedia.org/wiki/'+encodeURIComponent(p.wiki)+'" target="_blank" rel="noopener">'+MU.esc(p.name)+'</a>'; return MU.esc(p.name)}
+  // ---- data
+  function norm(n){return n.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase()}
+  function useFallback(){squad=FALLBACK; $("squadNote").textContent="First-team squad as listed on Wikipedia's Celtic article (loans excluded). Season statistics and the injury list arrive with the live feed."; renderSquad(); renderOut(); renderPitch()}
+  Promise.all([fetch("/squad.json").then(function(r){return r.json()}),fetch("/history/players.json").then(function(r){return r.json()})]).then(function(a){HIST=a[1];
+    FALLBACK=a[0].map(function(p){return {id:"w"+p.n,name:p.name,number:p.n,position:p.pos,nationality:p.nat,wiki:p.wiki,slug:p.slug,cap:p.cap}});
+  }).catch(function(){}).then(function(){
+    useFallback();
+    return MU.api("squad").then(function(j){
+      live=true;
+      var byName={}; FALLBACK.forEach(function(p){byName[norm(p.name)]=p});
+      squad=j.response[0].players.map(function(p){var w=byName[norm(p.name)]||FALLBACK.filter(function(f){return norm(f.name).split(" ").pop()===norm(p.name).split(" ").pop()})[0]||{}; return {id:p.id,name:w.name||p.name,number:p.number||w.number,position:p.position,age:p.age,photo:"/img/player/"+p.id+".png",nationality:w.nationality||"",wiki:w.wiki,slug:w.slug,cap:w.cap}});
+      $("squadNote").textContent="Live squad from API-Football. Season figures are league, cups and Europe combined; career figures come from Wikipedia's list of players.";
+      renderSquad(); renderPitch();
+      return Promise.all([
+        MU.api("injuries").then(function(k){var N=MU.injuries(k,[]); N.list.forEach(function(x){out[x.player.id]={id:x.player.id,name:x.player.name,type:x.player.type,reason:x.player.reason,date:x.fixture.date}}); out._meta={fetched:N.fetched,asOf:N.asOf}; renderOut(); renderSquad(); renderPitch()}).catch(function(){renderOut()}),
+        (function pages(n){return MU.api("players",{page:n}).then(function(k){k.response.forEach(function(x){var agg={apps:0,goals:0,assists:0,minutes:0,rating:null,r:[]}; x.statistics.forEach(function(s){if(s.team.id!==MU.TEAM)return; agg.apps+=s.games.appearences||0; agg.goals+=s.goals.total||0; agg.assists+=s.goals.assists||0; agg.minutes+=s.games.minutes||0; if(s.games.rating)agg.r.push(+s.games.rating)}); if(agg.r.length)agg.rating=agg.r.reduce(function(a,b){return a+b})/agg.r.length; stats[x.player.id]=agg; var sp=squad.filter(function(p){return p.id===x.player.id})[0]; if(sp){sp.nationality=sp.nationality||x.player.nationality; sp.age=sp.age||x.player.age}}); if(k.paging.current<k.paging.total&&n<6)return pages(n+1)})})(1).then(function(){renderSquad()})
+      ]);
+    }).catch(function(){});
+  });
+  MU.api("fixtures").then(function(j){var now=Date.now(); FIX=(j.response||[]).filter(function(f){return !/riendl/.test(f.league.name)&&f.fixture.timestamp*1000>now}).sort(function(a,b){return a.fixture.timestamp-b.fixture.timestamp}).slice(0,12).map(function(f){var h=f.teams.home.id===MU.TEAM; return {ko:f.fixture.date,home:h,opp:MU.cn(h?f.teams.away.name:f.teams.home.name).replace("Heart Of Midlothian","Hearts")}}); fillFix(); renderPitch()}).catch(function(){});
+
+  // ---- named saves + PNG export
+  function savesKey(){return "mu:xi:saved"}
+  function allSaves(){try{return JSON.parse(localStorage.getItem(savesKey())||"[]")}catch(e){return []}}
+  function renderSaves(){
+    var list=allSaves(), el=$("saves");
+    el.innerHTML=list.length?list.map(function(x,i){return '<li><button data-load="'+i+'">'+MU.esc(x.name)+'</button> <small>'+MU.esc(x.fixLabel)+' · '+MU.esc(x.form)+'</small> <button data-del="'+i+'" title="Delete" aria-label="Delete">×</button></li>'}).join(""):'<li><small>No saved line-ups yet.</small></li>';
+    el.querySelectorAll("[data-load]").forEach(function(b){b.addEventListener("click",function(){var x=allSaves()[+b.dataset.load]; if(!x)return; if([].some.call($("fix").options,function(o){return o.value===x.fix}))$("fix").value=x.fix; $("form").value=x.form; store(x.picks); renderPitch(); $("pickNote").textContent="Loaded “"+x.name+"”."})});
+    el.querySelectorAll("[data-del]").forEach(function(b){b.addEventListener("click",function(){var l=allSaves(); l.splice(+b.dataset.del,1); try{localStorage.setItem(savesKey(),JSON.stringify(l))}catch(e){} renderSaves()})});
+  }
+  $("save").addEventListener("click",function(){
+    var f=$("fix").selectedOptions[0].textContent, name=prompt("Name this line-up", "XI "+f.replace(/ · .*$/,"")+" "+$("form").value); if(!name)return;
+    var l=allSaves(); l.unshift({name:name,fix:$("fix").value,fixLabel:f,form:$("form").value,picks:saved(),at:Date.now()}); try{localStorage.setItem(savesKey(),JSON.stringify(l.slice(0,30)))}catch(e){} renderSaves(); $("pickNote").textContent="Saved “"+name+"”.";
+  });
+  $("png").addEventListener("click",function(){
+    var rows=FORMS[$("form").value], picks=saved(), W=900, H=1100, c=document.createElement("canvas"); c.width=W; c.height=H; var g=c.getContext("2d");
+    g.fillStyle="#1f6b3a"; g.fillRect(0,0,W,H); g.fillStyle="#23753f"; for(var y=0;y<H;y+=100)g.fillRect(0,y,W,50);
+    g.strokeStyle="rgba(255,255,255,.85)"; g.lineWidth=4; g.strokeRect(30,30,W-60,H-60); g.beginPath(); g.moveTo(30,H/2); g.lineTo(W-30,H/2); g.stroke(); g.beginPath(); g.arc(W/2,H/2,90,0,Math.PI*2); g.stroke();
+    g.strokeRect(W/2-180,30,360,140); g.strokeRect(W/2-180,H-170,360,140);
+    var f=FIX.filter(function(x){return x.ko===$("fix").value})[0];
+    g.fillStyle="#fff"; g.font="bold 30px Inter, Arial"; g.textAlign="center"; g.fillText((f?(f.home?"Celtic v "+f.opp:f.opp+" v Celtic"):"Celtic XI")+" · "+$("form").value,W/2,H-60);
+    g.font="16px Inter, Arial"; g.fillText(f?MU.fmtDate(f.ko)+" · "+MU.fmtKOText(f.ko):"",W/2,H-36);
+    var i=0, jobs=[]; var rowH=(H-260)/rows.length;
+    rows.forEach(function(r,ri){var cy=H-160-rowH*ri-rowH/2; r.forEach(function(pos,ci){var cx=W*(ci+1)/(r.length+1), id=picks[i++], p=squad.filter(function(x){return String(x.id)===String(id)})[0];
+      jobs.push(new Promise(function(res){
+        function label(){g.fillStyle="#fff"; g.font="bold 18px Inter, Arial"; g.textAlign="center"; g.shadowColor="#000"; g.shadowBlur=4; g.fillText(p?short(p.name):"—",cx,cy+66); g.shadowBlur=0; g.font="12px Inter, Arial"; g.fillStyle="#ffffff"; g.fillText(pos+(p&&p.number?" · "+p.number:""),cx,cy+84); res()}
+        g.fillStyle="#fff"; g.beginPath(); g.arc(cx,cy,40,0,Math.PI*2); g.fill();
+        if(p&&p.photo){var im=new Image(); im.crossOrigin="anonymous"; im.onload=function(){g.save(); g.beginPath(); g.arc(cx,cy,38,0,Math.PI*2); g.clip(); var s=Math.max(76/im.width,76/im.height); g.drawImage(im,cx-im.width*s/2,cy-38,im.width*s,im.height*s); g.restore(); label()}; im.onerror=function(){g.fillStyle="#007a3d"; g.font="bold 26px Inter, Arial"; g.textAlign="center"; g.fillText(p.number?String(p.number):"",cx,cy+9); label()}; im.src=p.photo}
+        else{g.fillStyle="#007a3d"; g.font="bold 26px Inter, Arial"; g.textAlign="center"; g.fillText(p&&p.number?String(p.number):"",cx,cy+9); label()}
+      }));
+    })});
+    Promise.all(jobs).then(function(){try{var a=document.createElement("a"); a.download="celtic-xi-"+($("fix").value.slice(0,10))+".png"; a.href=c.toDataURL("image/png"); a.click()}catch(e){$("pickNote").textContent="Couldn't export the image: "+e.message}});
+  });
+  renderSaves();
+
+  $("fix").addEventListener("change",renderPitch); $("form").addEventListener("change",renderPitch);
+  $("clear").addEventListener("click",function(){store([]);renderPitch()});
+  $("copy").addEventListener("click",function(){var rows=FORMS[$("form").value],picks=saved(),i=0,txt=[]; rows.forEach(function(r){txt.push(r.map(function(pos){var p=squad.filter(function(x){return String(x.id)===String(picks[i++])})[0]; return pos+": "+(p?p.name:"—")}).join(" · "))}); var f=$("fix").selectedOptions[0].textContent; navigator.clipboard&&navigator.clipboard.writeText("Celtic XI "+f+" ("+$("form").value+")\n"+txt.reverse().join("\n")).then(function(){$("pickNote").textContent="Copied."})});
+  // ---- tabs: Squad (default) · Availability · Pick your XI; #availability and #pick open straight onto a tab
+  function showTab(t,push){if(["squad","availability","pick"].indexOf(t)<0)t="squad";
+    document.querySelectorAll(".sqtabs [role=tab]").forEach(function(b){var on=b.dataset.t===t; b.setAttribute("aria-selected",on); b.tabIndex=on?0:-1});
+    ["squad","availability","pick"].forEach(function(x){$("p-"+x).hidden=x!==t});
+    if(push)history.replaceState(null,"",t==="squad"?location.pathname+location.search:"#"+t)}
+  document.querySelectorAll(".sqtabs [role=tab]").forEach(function(b,k,all){b.addEventListener("click",function(){showTab(b.dataset.t,true)});
+    b.addEventListener("keydown",function(e){var d=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:0; if(!d)return; var n=all[(k+d+all.length)%all.length]; n.focus(); showTab(n.dataset.t,true)})});
+  showTab(location.hash.slice(1)); window.addEventListener("hashchange",function(){showTab(location.hash.slice(1))});
+  $("moreCols").addEventListener("click",function(){var on=$("squad").classList.toggle("all"); this.setAttribute("aria-pressed",on); this.textContent=on?"Fewer columns":"Show all columns"});
+  // ---- pick a player: tap a position, search the squad (availability shown), back to the same formation
+  var PK={};
+  function openPicker(slot,i){var d=$("pickDlg"); PK={slot:slot,i:i}; $("pickTitle").innerHTML='Pick a player <span class="pp" translate="no">'+slot._pos+'</span>'; $("pickQ").value=""; fillPicker("");
+    if(d.showModal)d.showModal(); else d.setAttribute("open",""); setTimeout(function(){$("pickQ").focus()},30)}
+  function fold(t){return String(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
+  function fillPicker(q){var s=PK.slot; if(!s)return; q=fold(q);
+    var L=s._opts.filter(function(x){return !q||fold(x.name).indexOf(q)>=0});
+    var nat=L.filter(function(x){return x.position===GROUP[s._pos]}), oth=L.filter(function(x){return x.position!==GROUP[s._pos]});
+    function item(x){var o=out[x.id], st=o?(/questionable|doubt/i.test(o.type)?'<span class="av dbt">Doubtful</span>':'<span class="av out">Out</span>'):'<span class="av">Available</span>';
+      return '<li><button type="button" data-id="'+x.id+'"><img src="'+(x.photo||"/assets/crest-88.png")+'" alt="" loading="lazy" onerror="this.onerror=null;this.src=\'/assets/crest-88.png\'"><span>'+MU.esc(x.name)+'<small>'+(x.number?"#"+x.number+" · ":"")+({Goalkeeper:"Goalkeeper",Defender:"Defender",Midfielder:"Midfielder",Attacker:"Forward"}[x.position]||x.position||"")+(o&&o.reason?" · "+MU.esc(o.reason):"")+'</small></span>'+st+'</button></li>'}
+    $("pickList").innerHTML=(s._cur&&!q?'<li><button type="button" data-id=""><span></span><span>Leave this position empty</span><span></span></button></li>':'')+
+      (nat.length?'<li><h3>Natural position</h3></li>'+nat.map(item).join(""):'')+(oth.length?'<li><h3>Other positions</h3></li>'+oth.map(item).join(""):'')+(L.length?'':'<li class="sub" style="padding:8px">No one in the squad matches.</li>')}
+  $("pickQ").addEventListener("input",function(){fillPicker(this.value)});
+  $("pickList").addEventListener("click",function(e){var b=e.target.closest("button[data-id]"); if(!b)return; var arr=saved(); arr[PK.i]=b.dataset.id; store(arr); closePicker(); renderPitch();
+    var t=document.querySelector('#pitch button.tap[data-i="'+PK.i+'"]'); if(t)t.focus()});
+  function closePicker(){var d=$("pickDlg"); if(d.close)d.close(); else d.removeAttribute("open")}
+  $("pickClose").addEventListener("click",closePicker);
+  $("pickDlg").addEventListener("click",function(e){if(e.target===this)closePicker()});
 })();
 </script></body></html>

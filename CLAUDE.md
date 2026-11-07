@@ -1,7 +1,7 @@
 # Celtic: working notes for Claude
 
 Richard's Celtic club site, forked from manutd.wiki (repo SITE1), which it must not affect.
-Plain static pages + one Cloudflare Worker, deployed on push to `main` (Worker `celtic`, celtic.richardmcallister.workers.dev). No framework. Noindex until Richard launches it. Pages started from irelandfootball, so token names (`--red` is green here), `mu.js` and `mu.css` keep their manutd.wiki names and fixes port across.
+Plain static pages + one Cloudflare Worker, deployed on push to `main` (Worker `celtic`, celtic.richardmcallister.workers.dev). No framework. Noindex until Richard launches it. Pages started from irelandfootball and follow manutd.wiki's Nov 2026 design (Inter, sticky green masthead, bordered cards, dark footer band with sister sites, `MU.calMenu`), so token names (`--red` is green here), `mu.js` and `mu.css` keep their manutd.wiki names and fixes port across.
 
 ## Layout
 
@@ -15,6 +15,8 @@ tools/fetch_wiki.py     season and list articles into tools/data/wiki/ (incremen
 tools/parse_wiki.py     match boxes and the 2002-04 tables -> tools/data/matches_raw.json
 tools/build_archive.py  dedupes, names, totals, search.json; every disagreement goes in tools/data/reconcile.txt
 tools/make_assets.py <folder> [sizes]   everything visual from Richard's celtic-assets folder
+site/squad.json         first-team list from the club article (squad page fallback until the feed answers)
+site/history/timeline.json  trophies, lost finals, managers, records, firsts; two curated club entries
 ```
 
 ## Content rules
