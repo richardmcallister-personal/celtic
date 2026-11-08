@@ -4,13 +4,13 @@ Read CLAUDE.md first.
 
 ## Done
 7 Nov: moved to the manutd.wiki design (via irelandfootball's port): new hub (next match, form and table tiles, coming up, team news, last five, on this day, honours, Explore Celtic, hideable alerts), Add to calendar menu, dark footer with sister sites, squad tabs (Squad / Availability / Pick your XI), timeline page.
-Live on celtic.richardmcallister.workers.dev, noindex.
+Live on celtic.richardmcallister.app, noindex.
 Pages: hub, season, squad, match centre, results, seasons, players, player, opponents, opponent (Rangers is the Old Firm page), records, managers, manager, honours, kits with shirt collection, search. Dark mode, phone tab bar, iPhone launch images, match alerts, calendar.
 Archive: competitive games 1888-2026 from 139 Wikipedia season articles. Checks in tools/data/reconcile.txt.
 
 ## Needs Richard
 - `API_FOOTBALL_KEY` as a Worker secret. Until then live sections say the feed is not connected. Tested only with mocked standings and squad.
-- Domain (recommended: celticfc.wiki), then add it to `routes` in wrangler.jsonc and update the origin in calendar().
+- A club domain (recommended: celticfc.wiki) if wanted: add it to `routes` in wrangler.jsonc and update the origin in calendar() and calFeed(). For now it lives at celtic.richardmcallister.app (8 Nov).
 - Crests for older opponents: the pack has the 20 current ones.
 - Rights: kit images, crests and logos are not cleared. Recheck before removing noindex.
 - Trips: does he have a Celtic ticket account?

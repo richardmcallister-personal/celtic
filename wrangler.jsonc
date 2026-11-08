@@ -3,7 +3,8 @@
   "main": "worker.js",
   "compatibility_date": "2026-09-11",
   "assets": { "directory": "./site", "binding": "ASSETS", "run_worker_first": true },
-  "workers_dev": true,   // the workers.dev address until a domain is bought; add "routes" then
+  "workers_dev": true,   // kept as a fallback address
+  "routes": [{ "pattern": "celtic.richardmcallister.app", "custom_domain": true }],   // until a club domain is bought
   "kv_namespaces": [{ "binding": "MU_CACHE", "id": "01f8867772454fd8b7ec450644cf32ea" }],
   "triggers": { "crons": ["7 * * * *", "* * * * *"] },
   "observability": { "enabled": true }

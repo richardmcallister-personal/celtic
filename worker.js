@@ -234,7 +234,7 @@ const icsTime = (iso) => new Date(iso).toISOString().replace(/[-:]/g, "").replac
 async function calendar(url, env) {
   let fx = await load(env, "api:v2:/api/fixtures?v=4");
   if (!fx.body) { const r = await refresh(env, "api:v2:/api/fixtures?v=4", ROUTES["/api/fixtures"], new URL("https://site.local/api/fixtures?v=4")); if (!r.ok) return json({ error: "fixtures unavailable" }, 503); fx = { body: r.body }; }   // never an empty feed: a subscribed calendar would drop its events
-  const one = url.searchParams.get("m"), name = (t) => (t.id === TEAM ? "Celtic" : t.name).replace(/&apos;/g, "'"), origin = "https://celtic.richardmcallister.workers.dev", now = icsTime(new Date().toISOString());
+  const one = url.searchParams.get("m"), name = (t) => (t.id === TEAM ? "Celtic" : t.name).replace(/&apos;/g, "'"), origin = "https://celtic.richardmcallister.app", now = icsTime(new Date().toISOString());
   const list = (JSON.parse(fx.body).response || []).filter((f) => !/riendl/.test(f.league.name) && !/CANC|ABD|AWD|WO/.test(f.fixture.status.short) && (!one || String(f.fixture.id) === one)).sort((a, b) => a.fixture.timestamp - b.fixture.timestamp);
   if (one && !list.length) return new Response("No such fixture", { status: 404 });
   const L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//celtic-site//Fixtures//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];

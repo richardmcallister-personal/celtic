@@ -1,7 +1,7 @@
 # Celtic: working notes for Claude
 
 Richard's Celtic club site, forked from manutd.wiki (repo SITE1), which it must not affect.
-Plain static pages + one Cloudflare Worker, deployed on push to `main` (Worker `celtic`, celtic.richardmcallister.workers.dev). No framework. Noindex until Richard launches it. Pages started from irelandfootball and follow manutd.wiki's Nov 2026 design (Inter, sticky green masthead, bordered cards, dark footer band with sister sites, `MU.calMenu`), so token names (`--red` is green here), `mu.js` and `mu.css` keep their manutd.wiki names and fixes port across.
+Plain static pages + one Cloudflare Worker, deployed on push to `main` (Worker `celtic`, celtic.richardmcallister.app). No framework. Noindex until Richard launches it. Pages started from irelandfootball and follow manutd.wiki's Nov 2026 design (Inter, sticky green masthead, bordered cards, dark footer band with sister sites, `MU.calMenu`), so token names (`--red` is green here), `mu.js` and `mu.css` keep their manutd.wiki names and fixes port across.
 
 ## Layout
 

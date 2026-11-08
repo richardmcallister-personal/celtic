@@ -184,7 +184,7 @@ window.MU=(function(){
       '<div class="fsis"><h2>Other sites</h2><ul>'+sis.map(function(x){return '<li><a href="'+x[0]+'" target="_blank" rel="noopener"><img src="/assets/sites/'+x[3]+'.png" alt="" width="40" height="40" loading="lazy" decoding="async"><span><b translate="no">'+x[1]+'</b><small translate="no">'+x[2]+'</small></span></a></li>'}).join("")+'</ul></div>';
     f.insertBefore(d,f.firstChild); f.classList.add("big")}
   document.addEventListener("DOMContentLoaded",siteFooter);
-  function calFeed(){var h=location.host||"celtic.richardmcallister.workers.dev", path="/calendar.ics"; return {webcal:"webcal://"+h+path, https:location.protocol+"//"+h+path, google:"https://calendar.google.com/calendar/r?cid="+encodeURIComponent("webcal://"+h+path)}}
+  function calFeed(){var h=location.host||"celtic.richardmcallister.app", path="/calendar.ics"; return {webcal:"webcal://"+h+path, https:location.protocol+"//"+h+path, google:"https://calendar.google.com/calendar/r?cid="+encodeURIComponent("webcal://"+h+path)}}
   function confTag(x){return x&&x.conf?'<span class="conftag" title="Kick-off confirmed">Confirmed</span>':''}
   function prov(x){var c=x&&typeof x==="object"?x.conf:x; return c?"":'<span class="prov" title="Kick-off time not confirmed yet">Provisional</span>'}
   // "Last checked" stamps from status.json, written by the build scripts and the weekly scheduled task.
