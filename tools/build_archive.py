@@ -98,7 +98,7 @@ for m in re.finditer(r'!\s*scope=row\s*\|\s*\[\[(\d{4})[–-](\d{2,4})[^\]]*\]\]
     def ni(s):
         s=re.sub(r'\D','',s); return int(s) if s else None
     lastc=[x for x in c if not x.strip().startswith('rowspan')]
-    SEASONS[y]=dict(top=unlink(re.sub(r'<hr\s*/?>',', ',strip_refs(c[-2]))) if len(c)>=11 else '',topg=ni(re.sub(r'\{\{0\}\}','',c[-1])) if len(c)>=11 else None,div=cv(0),p=ni(cv(1)),w=ni(cv(2)),d=ni(cv(3)),l=ni(cv(4)),gf=ni(cv(5)),ga=ni(cv(6)),pts=ni(cv(7)),pos=cv(8))
+    SEASONS[y]=dict(top=re.sub(r'\s*,\s*,?',', ',cv(len(c)-2).replace('<hr>',', ').replace('<hr/>',', ')).strip(', ') if len(c)>=11 else '',topg=ni(re.sub(r'\{\{0\}\}','',c[-1])) if len(c)>=11 else None,div=cv(0),p=ni(cv(1)),w=ni(cv(2)),d=ni(cv(3)),l=ni(cv(4)),gf=ni(cv(5)),ga=ni(cv(6)),pts=ni(cv(7)),pos=cv(8))
 # ---- reconcile league totals
 LEAGUE=collections.defaultdict(lambda:dict(p=0,w=0,d=0,l=0,gf=0,ga=0))
 for m in matches:
@@ -204,7 +204,7 @@ for y in years:
     S=SEASONS.get(y,{}); L=[m for m in matches if m['y']==y]
     title=f"{y}–{str(y+1)[-2:]}" if (y+1)%100 else f"{y}–{y+1}"
     known=sum(len([s for s in m.get('sc',[])]) for m in L); gf=sum(m['gf'] for m in L)
-    seasons.append(dict(y=y,title=title,div=S.get('div',''),pos=S.get('pos',''),p=S.get('p'),w=S.get('w'),d=S.get('d'),l=S.get('l'),gf=S.get('gf'),ga=S.get('ga'),pts=S.get('pts'),games=len(L),goals=gf,known=known))
+    seasons.append(dict(y=y,title=title,top=S.get('top',''),topg=S.get('topg'),div=S.get('div',''),pos=S.get('pos',''),p=S.get('p'),w=S.get('w'),d=S.get('d'),l=S.get('l'),gf=S.get('gf'),ga=S.get('ga'),pts=S.get('pts'),games=len(L),goals=gf,known=known))
 # ---- records
 def top(L,key,n=10): return sorted(L,key=key)[:n]
 M=[m for m in matches if m['c'] in MAJOR]
@@ -314,6 +314,31 @@ TL+= [dict(d='1887-11-06',t='club',h='Celtic founded',p='Formed in the East End 
 TL.sort(key=lambda e:e['d'])
 json.dump(TL,open(OUT+'timeline.json','w'),ensure_ascii=False,separators=(',',':'))
 print('timeline',len(TL),collections.Counter(e['t'] for e in TL))
+# ---- the season behind each shirt: managers, top scorer, trophies, one defining result
+won={}
+for h in honours:
+    for ss in h['seasons']: won.setdefault(int(ss[:4]),[]).append(h['name'])
+SNAME={x['y']:x for x in seasons}; story={}
+PRI={'EC':0,'EL':1,'CWC':1,'SC':2,'LC':3,'OTH':4}
+for y in sorted(set(m['y'] for m in matches)):
+    L=[m for m in matches if m['y']==y]; M2=[m for m in L if m['c'] in MAJOR]
+    mg=[]; [mg.append((m['mn'],m.get('ms'))) for m in L if m.get('mn') and (m['mn'],m.get('ms')) not in mg]
+    S=SNAME.get(y,{}); top=None
+    if S.get('top'): top=dict(n=S['top'],g=S.get('topg'),src='list')
+    else:
+        gs=sum(m['gf'] for m in M2); kn=collections.Counter(x[0] for m in M2 for x in m.get('sc',[]) if x[0]!='Own goal')
+        if gs and kn and sum(kn.values())>=0.9*gs: n,g=kn.most_common(1)[0]; top=dict(n=n,g=g,src='archive')
+    key=None
+    F=[m for m in M2 if fin(m) and (m['gf']>m['ga'] or m.get('pw')==1)]
+    if F: m=sorted(F,key=lambda m:PRI.get(m['c'],9))[0]; key=dict(m,why=m['t']+' final won')
+    else:
+        R=[m for m in M2 if m['o']=='Rangers' and m['gf']>m['ga']]
+        if R: m=max(R,key=lambda m:(m['gf']-m['ga'],m['gf'])); key=dict(m,why='Biggest win over Rangers')
+        elif M2:
+            m=max(M2,key=lambda m:(m['gf']-m['ga'],m['gf'])); key=dict(m,why='Biggest win' if m['gf']>m['ga'] else 'Best result')
+    if key: key={k:key[k] for k in ('d','c','t','o','h','gf','ga','pw','v','r','why') if k in key}
+    story[y]=dict(mg=[dict(n=n,s=sl) for n,sl in mg],top=top,won=won.get(y,[]),div=S.get('div',''),pos=S.get('pos',''),key=key,p=len(M2),w=sum(m['gf']>m['ga'] for m in M2),d=sum(m['gf']==m['ga'] for m in M2),l=sum(m['gf']<m['ga'] for m in M2))
+json.dump(story,open(OUT+'season_story.json','w'),ensure_ascii=False,separators=(',',':'))
 json.dump(otd,open(OUT+'otd.json','w'),ensure_ascii=False,separators=(',',':'))
 json.dump(honours,open(OUT+'honours.json','w'),ensure_ascii=False,separators=(',',':'))
 for n,d in dict(matches=matches,opponents=opponents,players=players,managers=managers,player_goals=player_goals,records=records,seasons=seasons).items():
