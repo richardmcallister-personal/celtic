@@ -3,6 +3,7 @@
 Read CLAUDE.md first.
 
 ## Done
+12 Nov: Old Firm explorer at /oldfirm/ (competition, venue and era filters; running-total chart; decades; venue and competition splits; biggest wins and defeats; runs; scorers; every game) and a page for every archive game at /game/?i=. Parser now reads shoot-outs and extra time.
 11 Nov: tapping a shirt on /kits/ shows its season: league finish, manager(s), top scorer, trophies, record, and one defining result.
 7 Nov: moved to the manutd.wiki design (via irelandfootball's port): new hub (next match, form and table tiles, coming up, team news, last five, on this day, honours, Explore Celtic, hideable alerts), Add to calendar menu, dark footer with sister sites, squad tabs (Squad / Availability / Pick your XI), timeline page.
 Live on celtic.richardmcallister.app, noindex.

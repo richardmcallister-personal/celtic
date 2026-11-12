@@ -1,7 +1,7 @@
 // Shared bits for the Celtic pages (forked from manutd.wiki by way of irelandfootball).
 window.MU=(function(){
   var TEAM=247;
-  var NAV=[["/","Hub"],["/season/","Season"],["/squad/","Squad"],["/results/","Results"],["/seasons/","Seasons"],["/players/","Players"],["/opponents/","Opponents"],["/records/","Records"],["/managers/","Managers"],["/honours/","Honours"],["/timeline/","Timeline"],["/kits/","Kits"]];
+  var NAV=[["/","Hub"],["/season/","Season"],["/squad/","Squad"],["/results/","Results"],["/seasons/","Seasons"],["/players/","Players"],["/opponents/","Opponents"],["/oldfirm/","Old Firm"],["/records/","Records"],["/managers/","Managers"],["/honours/","Honours"],["/timeline/","Timeline"],["/kits/","Kits"]];
   // Wide tables scroll sideways on narrow screens instead of being clipped: every table.mu gets a scroll wrapper, including ones rendered later.
   function wrapTables(root){(root||document).querySelectorAll("table.mu").forEach(function(t){if(t.parentElement&&t.parentElement.classList.contains("tw"))return; var w=document.createElement("div"); w.className="tw"; t.parentNode.insertBefore(w,t); w.appendChild(t)})}
   if(window.MutationObserver){new MutationObserver(function(ms){var hit=false; ms.forEach(function(m){if(m.addedNodes.length)hit=true}); if(hit)wrapTables()}).observe(document.documentElement,{childList:true,subtree:true})}
@@ -36,7 +36,7 @@ window.MU=(function(){
     el.innerHTML=NAV.map(function(n){return '<a href="'+n[0]+'"'+(n[1]===active?' aria-current="page"':'')+'>'+n[1]+'</a>'}).join("")+'<form class="musearch" role="search" action="/search/"><input type="search" name="q" placeholder="Search players, opponents, managers…" aria-label="Search the site" autocomplete="off"><div class="hits" hidden></div></form>';
     searchBox(el.querySelector(".musearch"));
     // phone tab bar: five destinations, the current one lit
-    var TABS=[["/","Match",'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>',["Hub"]],["/season/","Season",'<path d="M4 6h16M4 12h16M4 18h10"/>',["Season"]],["/results/","Results",'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',["Results"]],["/players/","Players",'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 4-7 8-7s7 2 8 7"/>',["Players","Squad"]],["/#more","More",'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>',["Opponents","Records","Managers","Kits","Honours","Seasons","Timeline"]]];
+    var TABS=[["/","Match",'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>',["Hub"]],["/season/","Season",'<path d="M4 6h16M4 12h16M4 18h10"/>',["Season"]],["/results/","Results",'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',["Results"]],["/players/","Players",'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 4-7 8-7s7 2 8 7"/>',["Players","Squad"]],["/#more","More",'<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>',["Opponents","Old Firm","Records","Managers","Kits","Honours","Seasons","Timeline"]]];
     var old=document.querySelector("nav.mutabs"); if(old)old.remove();
     var t=document.createElement("nav"); t.className="mutabs"; t.setAttribute("aria-label","Sections");
     t.innerHTML=TABS.map(function(x){return '<a href="'+x[0]+'"'+(x[3].indexOf(active)>=0?' aria-current="page"':'')+'><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+x[2]+'</svg>'+x[1]+'</a>'}).join("");
@@ -179,7 +179,7 @@ window.MU=(function(){
     d.innerHTML='<div class="fbrand"><a class="fname" href="/"><img src="/assets/crest-88.png" alt="" width="36" height="36"><span>Celtic</span></a><p>A fan-built club archive, not connected with Celtic FC.</p><p class="fdata">Data: API-Football, Wikipedia (CC BY-SA). Images: <a href="/kits/#credits">sources and credits</a>.</p></div>'+
       '<div class="fcols">'+col("Matchday",[["/","Hub"],["/season/","Season and fixtures"],["/squad/#availability","Team news"],[calFeed().webcal,"Fixtures in your calendar"]])+
       col("Club",[["/squad/","Squad and availability"],["/squad/#pick","Pick your XI"],["/kits/","Kits since 1888"],["/honours/","Honours"]])+
-      col("History",[["/timeline/","Timeline"],["/results/","Every result"],["/seasons/","Every season"],["/opponent/?o=rangers","The Old Firm"],["/records/","Records"]])+
+      col("History",[["/timeline/","Timeline"],["/results/","Every result"],["/seasons/","Every season"],["/oldfirm/","The Old Firm"],["/records/","Records"]])+
       col("Official",[["https://www.celticfc.com/","celticfc.com"],["https://www.celticfc.com/tickets/","Tickets"],["https://spfl.co.uk/","SPFL"]])+'</div>'+
       '<div class="fsis"><h2>Other sites</h2><ul>'+sis.map(function(x){return '<li><a href="'+x[0]+'" target="_blank" rel="noopener"><img src="/assets/sites/'+x[3]+'.png" alt="" width="40" height="40" loading="lazy" decoding="async"><span><b translate="no">'+x[1]+'</b><small translate="no">'+x[2]+'</small></span></a></li>'}).join("")+'</ul></div>';
     f.insertBefore(d,f.firstChild); f.classList.add("big")}

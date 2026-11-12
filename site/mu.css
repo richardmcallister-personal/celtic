@@ -424,3 +424,5 @@ footer.mu.big .themesw button{color:#fff}
 @media (max-width:640px){footer.mu.big{padding-top:28px} .sitefoot{grid-template-columns:1fr;gap:22px} .fcols{display:none}}
 body:has(footer.mu.big){padding-bottom:0} footer.mu.big{padding-bottom:96px} @media (max-width:640px){footer.mu.big{padding-bottom:150px}}
 footer.mu.big .themesw button{background:transparent;color:#fff;border:0} footer.mu.big .themesw button[aria-pressed="true"]{background:#fff;color:#181818} footer.mu.big .langsw option{color:#181818}
+
+td a.gl{color:inherit;font-weight:600;text-decoration:none;border-bottom:1px solid var(--rule)} td a.gl:hover{border-color:currentColor}

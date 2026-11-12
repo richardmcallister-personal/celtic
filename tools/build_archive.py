@@ -255,7 +255,7 @@ for x in managers:
     seen_m.add(x['slug']); search.append([x['name'],'manager','/manager/?m='+x['slug'],x['career'],[]])
 for o in opponents: search.append([o['name'],'club','/opponent/?o='+slug(o['name']),str(o['p'])+' games, '+o['first'][:4]+'–'+o['last'][:4],[]])
 for x in seasons: search.append([x['title'],'season','/results/?season='+str(x['y']),' · '.join(str(v) for v in (x['div'],x['pos']) if v),[]])
-for t,u,a in [('Timeline','/timeline/',['history','decades']),('Every result','/results/',['results','fixtures']),('Every season','/seasons/',['seasons','league']),('Honours','/honours/',['trophies','titles','cups']),('Records','/records/',[]),('Kits','/kits/',['shirts','hoops']),('Squad','/squad/',[]),('Old Firm: Rangers','/opponent/?o=rangers',['old firm','derby'])]: search.append([t,'page',u,'',a])
+for t,u,a in [('Timeline','/timeline/',['history','decades']),('Every result','/results/',['results','fixtures']),('Every season','/seasons/',['seasons','league']),('Honours','/honours/',['trophies','titles','cups']),('Records','/records/',[]),('Kits','/kits/',['shirts','hoops']),('Squad','/squad/',[]),('Old Firm explorer','/oldfirm/',['old firm','derby','rangers'])]: search.append([t,'page',u,'',a])
 json.dump(search,open('site/search.json','w'),ensure_ascii=False,separators=(',',':'))
 json.dump({'archive':{'date':today,'note':f"{len(matches)} matches to {matches[-1]['d']}"}},open('site/status.json','w'))
 # ---- first-team squad from the club article (fallback until the feed answers; also gives Wikipedia links)

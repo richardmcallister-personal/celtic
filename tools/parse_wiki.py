@@ -155,6 +155,11 @@ def rows_from_boxes(t,year):
         ca=bool(re.match(r'^celtic\b(?!.*(?:youth|reserve|\bxi\b|colts))',a,re.I)); cb=bool(re.match(r'^celtic\b(?!.*(?:youth|reserve|\bxi\b|colts))',b,re.I))
         c,lab=classify(sec,rnd,year)
         d=parse_date(f.get('date',''),year); sc=parse_score(f.get('score',''))
+        if sc:
+            aet=sc[2] or bool(re.match(r'\s*(y|yes|true|1)\b',f.get('aet',''),re.I)); ps=sc[3]
+            pm=re.search(r'(\d+)\s*[–\-−:]\s*(\d+)',unlink(strip_refs(re.sub(r'\{\{[^}]*\}\}','',f.get('penaltyscore','')))))
+            if pm: ps=(int(pm.group(1)),int(pm.group(2))); aet=True
+            sc=(sc[0],sc[1],aet,ps)
         rows.append(dict(y=year,c=c,lab=lab,sec=' / '.join(sec),rnd=rnd,d=d,t1=a,t2=b,ol=(bl if ca else al),ca=ca,cb=cb,s=sc,g1=parse_goals(f.get('goals1','')),g2=parse_goals(f.get('goals2','')),
           st=unlink(strip_refs(f.get('stadium',''))),loc=unlink(strip_refs(f.get('location',''))),att=re.sub(r'\D','',strip_refs(f.get('attendance','')).split('(')[0])[:7],ref=unlink(strip_refs(f.get('referee',''))),rep=(re.search(r'https?://[^\s\]|]+',f.get('report','')) or [None])[0] if f.get('report') else None,src='box'))
     return rows
